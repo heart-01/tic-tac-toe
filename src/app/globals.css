@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.noto-sans-thai {
+  font-family: "Noto Sans Thai", sans-serif;
+}
