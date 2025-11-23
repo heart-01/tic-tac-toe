@@ -15,9 +15,13 @@ const WINNING_COMBINATIONS = [
 
 export const checkWinner = (board: Board): GameResult => {
   for (const combo of WINNING_COMBINATIONS) {
-    const [a, b, c] = combo;
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a] as "X" | "O";
+    const [firstIndex, secondIndex, thirdIndex] = combo;
+    if (
+      board[firstIndex] &&
+      board[firstIndex] === board[secondIndex] &&
+      board[firstIndex] === board[thirdIndex]
+    ) {
+      return board[firstIndex] as "X" | "O";
     }
   }
 

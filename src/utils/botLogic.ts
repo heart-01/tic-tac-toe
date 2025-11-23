@@ -13,9 +13,9 @@ const WINNING_COMBINATIONS = [
 
 const findWinningMove = (board: Board, player: Cell): number => {
   for (const combo of WINNING_COMBINATIONS) {
-    const [a, b, c] = combo;
-    const cells = [board[a], board[b], board[c]];
-    const indices = [a, b, c];
+    const [firstIndex, secondIndex, thirdIndex] = combo;
+    const cells = [board[firstIndex], board[secondIndex], board[thirdIndex]];
+    const indices = [firstIndex, secondIndex, thirdIndex];
     const playerCount = cells.filter((cell) => cell === player).length;
     const emptyCount = cells.filter((cell) => cell === null).length;
 
