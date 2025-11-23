@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   createEmptyBoard,
   checkWinner,
@@ -11,7 +12,8 @@ import { UserScore } from "@/types/userScore";
 import { useAuthentication } from "@/utils/authTokenClientHelper";
 
 export const useGame = () => {
-  const { session } = useAuthentication();
+  const router = useRouter();
+  const { session, isAuthenticated } = useAuthentication();
   const username = session?.user?.email || "Guest";
   const [board, setBoard] = useState<Board>(createEmptyBoard());
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
@@ -28,6 +30,12 @@ export const useGame = () => {
   });
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, router]);
+
+  useEffect(() => {
     setUserScore(getUserScore(username!));
   }, [username]);
 
@@ -36,7 +44,7 @@ export const useGame = () => {
       setGameStatus("บอทกำลังคิด...");
 
       const timer = setTimeout(() => {
-        const botMove = getBotMove(board);
+        const botMove: number = getBotMove(board);
         if (botMove !== -1) {
           const newBoard = [...board];
           newBoard[botMove] = "O";
