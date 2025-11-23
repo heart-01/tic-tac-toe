@@ -1,5 +1,6 @@
 import { AppENV } from "@/enums/app.enum";
-import NextAuth from "next-auth";
+import NextAuth, { Account, Session, User } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
@@ -15,31 +16,31 @@ export const authOptions = {
     error: "/not-found",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: Number(process.env.SESSION_MAX_AGE),
   },
   debug: process.env.APP_ENV !== AppENV.Production,
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ account }: { account: Account | null }) {
       const idToken = account?.id_token;
       if (!idToken) {
         return false;
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user: User | null }) {
       if (user) {
         return {
           ...token,
           user: {
-            ...user.user,
+            ...user,
           },
         };
       }
 
       return token;
     },
-    async session({ session, token }) {
+    async session({ session }: { session: Session; token: JWT }) {
       return {
         ...session,
       };
