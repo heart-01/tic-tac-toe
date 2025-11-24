@@ -11,4 +11,6 @@ export const useLoginForm = () => {
       router.push("/game");
     }
   }, [isAuthenticated, router]);
+
+  return { router };
 };
