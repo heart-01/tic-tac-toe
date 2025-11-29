@@ -36,7 +36,11 @@ export const useGame = () => {
   }, [isAuthenticated, router]);
 
   useEffect(() => {
-    setUserScore(getUserScore(username!));
+    const fetchUserScore = async () => {
+      const score = await getUserScore(username!);
+      setUserScore(score);
+    };
+    fetchUserScore();
   }, [username]);
 
   useEffect(() => {
@@ -64,30 +68,31 @@ export const useGame = () => {
     }
   }, [isPlayerTurn, isGameOver, board]);
 
-  const handleGameResult = (result: GameResult) => {
+  const handleGameResult = async (result: GameResult) => {
+    let msgAlert = "";
     if (result === "X") {
       setGameStatus("🎉 คุณชนะ!");
       setIsGameOver(true);
-      const updated = updateScore(username!, "win");
+      const updated = await updateScore(username!, "win");
       setUserScore(updated);
-      alert(
+      msgAlert =
         userScore.currentWinStreak === 2
           ? "🔥 ชนะ 3 ครั้งติดกัน! +1 คะแนนโบนัส!"
-          : "คุณชนะ! 🎉"
-      );
+          : "คุณชนะ! 🎉";
     } else if (result === "O") {
       setGameStatus("คุณแพ้!");
       setIsGameOver(true);
-      const updated = updateScore(username!, "loss");
+      const updated = await updateScore(username!, "loss");
       setUserScore(updated);
-      alert("คุณแพ้!");
+      msgAlert = "คุณแพ้!";
     } else if (result === "draw") {
       setGameStatus("เสมอ!");
       setIsGameOver(true);
-      const updated = updateScore(username!, "draw");
+      const updated = await updateScore(username!, "draw");
       setUserScore(updated);
-      alert("เสมอ!");
+      msgAlert = "เสมอ!";
     }
+    if (msgAlert) alert(msgAlert);
   };
 
   const handleCellClick = (index: number) => {

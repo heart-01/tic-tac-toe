@@ -16,8 +16,12 @@ const Scores = () => {
   const [scores, setScores] = useState<UserScore[]>([]);
 
   useEffect(() => {
+    const fetchScores = async () => {
+      const allScores = await getAllScores();
+      setScores(allScores);
+    };
     setMounted(true);
-    setScores(getAllScores());
+    fetchScores();
   }, []);
 
   return (
