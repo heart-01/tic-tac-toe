@@ -1,47 +1,46 @@
+import {
+  findScoreByUser,
+  findAllScores,
+  updateScoreUser,
+} from "@/services/score";
 import { UserScore } from "@/types/userScore";
 
-const STORAGE_KEY = "scores";
-
-export const getAllScores = (): UserScore[] => {
-  if (typeof window === "undefined") return [];
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : [];
+export const getAllScores = async (): Promise<UserScore[] | []> => {
+  const result = await findAllScores();
+  return result.success ? (result.data as UserScore[]) : [];
 };
 
-export const getUserScore = (username: string): UserScore => {
-  const scores = getAllScores();
-  const userScore = scores.find((s) => s.username === username);
-
-  if (userScore) {
-    return userScore;
+export const getUserScore = async (username: string): Promise<UserScore> => {
+  const result = await findScoreByUser(username);
+  if (!result.success || (result.success && !result.data)) {
+    return {
+      username,
+      score: 0,
+      wins: 0,
+      losses: 0,
+      draws: 0,
+      bestWinStreak: 0,
+      currentWinStreak: 0,
+    };
   }
-
-  return {
-    username,
-    score: 0,
-    wins: 0,
-    losses: 0,
-    draws: 0,
-    bestWinStreak: 0,
-    currentWinStreak: 0,
-  };
+  return result.data as UserScore;
 };
 
-export const updateScore = (
+export const updateScore = async (
   username: string,
   result: "win" | "loss" | "draw"
-): UserScore => {
-  const scores = getAllScores();
-  const userScore = getUserScore(username);
+): Promise<UserScore> => {
+  const userScore: UserScore = await getUserScore(username);
 
   if (result === "win") {
     userScore.wins += 1;
     userScore.score += 1;
     userScore.currentWinStreak += 1;
 
+    // Check for 3-win streak bonus
     if (userScore.currentWinStreak === 3) {
-      userScore.score += 1;
-      userScore.currentWinStreak = 0;
+      userScore.score += 1; // Bonus point
+      userScore.currentWinStreak = 0; // Reset streak
     }
 
     if (userScore.currentWinStreak > userScore.bestWinStreak) {
@@ -56,11 +55,14 @@ export const updateScore = (
     userScore.currentWinStreak = 0;
   }
 
-  const updatedScores = scores.filter((s) => s.username !== username);
-  updatedScores.push(userScore);
-  if (typeof window !== "undefined") {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedScores));
-  }
+  await updateScoreUser({
+    score: userScore.score,
+    wins: userScore.wins,
+    losses: userScore.losses,
+    draws: userScore.draws,
+    bestWinStreak: userScore.bestWinStreak,
+    currentWinStreak: userScore.currentWinStreak,
+  });
 
   return userScore;
 };
