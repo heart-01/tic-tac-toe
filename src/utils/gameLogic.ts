@@ -14,6 +14,7 @@ const WINNING_COMBINATIONS = [
 ];
 
 export const checkWinner = (board: Board): GameResult => {
+  // Check for a winning combination
   for (const combo of WINNING_COMBINATIONS) {
     const [firstIndex, secondIndex, thirdIndex] = combo;
     if (
@@ -25,6 +26,7 @@ export const checkWinner = (board: Board): GameResult => {
     }
   }
 
+  // Check for draw (board full)
   if (board.every((cell) => cell !== null)) {
     return "draw";
   }
