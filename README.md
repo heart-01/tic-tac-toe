@@ -16,7 +16,7 @@ This is a web-based Tic-Tac-Toe game built with Next.js. The project demonstrate
 - **Language**: TypeScript
 - **UI**: React, Ant Design, Tailwind CSS
 - **Authentication**: NextAuth.js
-- **Database**: Local Storage (for demo purposes)
+- **Database**: MongoDB
 
 ## 🚀 Getting Started
 
@@ -40,6 +40,7 @@ Follow these instructions to get the project up and running on your local machin
 
    ```env
    # Authentication
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
    NEXTAUTH_URL=http://localhost:3000
    NEXTAUTH_SECRET=
    SESSION_MAX_AGE=
@@ -47,6 +48,9 @@ Follow these instructions to get the project up and running on your local machin
    # Google Provider
    GOOGLE_CLIENT_ID=
    GOOGLE_CLIENT_SECRET=
+
+   # Database
+   MONGODB_URI=
    ```
 3. **Install dependencies:**
 
